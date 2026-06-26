@@ -1,931 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>X Bazaar – Shop Online India</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#eaeded;color:#0f1111;min-height:100vh}
-a{text-decoration:none;color:inherit}
-button{font-family:inherit}
 
-/* ═══ NAVBAR ═══ */
-#navbar{background:#131921;color:#fff;display:flex;align-items:center;gap:8px;padding:8px 12px;position:sticky;top:0;z-index:1000;flex-wrap:nowrap}
-.nav-logo{display:flex;align-items:center;gap:4px;border:2px solid transparent;padding:4px 8px;border-radius:3px;cursor:pointer;min-width:fit-content}
-.nav-logo:hover{border-color:#fff}
-.nav-logo img{height:38px;object-fit:contain}
-.nav-logo-text{color:#febd69;font-size:22px;font-weight:900;letter-spacing:-1px}
-.nav-logo sup{color:#febd69;font-size:10px;vertical-align:super}
-.nav-deliver{display:flex;flex-direction:column;border:2px solid transparent;padding:4px 8px;border-radius:3px;cursor:pointer;min-width:fit-content}
-.nav-deliver:hover{border-color:#fff}
-.nav-deliver small{font-size:11px;color:#ccc}
-.nav-deliver b{font-size:13px;color:#fff}
-#searchbar{flex:1;display:flex;height:40px;min-width:0;border-radius:4px;overflow:hidden}
-#searchbar select{background:#f3f3f3;border:none;padding:0 6px;font-size:12px;color:#555;cursor:pointer;max-width:80px}
-#searchbar input{flex:1;border:none;padding:0 10px;font-size:14px;outline:none;min-width:0}
-#searchbar button{background:#febd69;border:none;width:46px;cursor:pointer;font-size:18px;flex-shrink:0}
-#searchbar button:hover{background:#f3a847}
-.nav-account{display:flex;flex-direction:column;border:2px solid transparent;padding:4px 8px;border-radius:3px;cursor:pointer;min-width:fit-content}
-.nav-account:hover{border-color:#fff}
-.nav-account small{font-size:11px;color:#ccc}
-.nav-account b{font-size:13px}
-#nav-cart{display:flex;align-items:center;gap:4px;border:2px solid transparent;padding:4px 8px;border-radius:3px;cursor:pointer}
-#nav-cart:hover{border-color:#fff}
-#cart-count{background:#febd69;color:#131921;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
-#nav-cart b{font-size:14px;color:#fff}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-/* ═══ SUBNAV ═══ */
-#subnav{background:#232f3e;color:#fff;display:flex;align-items:center;padding:0 8px;overflow-x:auto;scrollbar-width:none;white-space:nowrap}
-#subnav::-webkit-scrollbar{display:none}
-.snav-item{padding:8px 12px;font-size:13px;border:2px solid transparent;border-radius:3px;cursor:pointer;display:inline-block}
-.snav-item:hover{border-color:#fff}
-.snav-item.active-cat{border-color:#febd69;color:#febd69}
+<title>X Bazaar | Online Shopping</title>
 
-/* ═══ HERO ═══ */
-#hero{position:relative;overflow:hidden;background:#131921;max-height:480px}
-#hero img{width:100%;display:block;object-fit:cover;max-height:480px}
-#hero-fade{position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(transparent,#eaeded)}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
-/* ═══ PRODUCT GRID ═══ */
-.section-wrap{background:#fff;margin:12px 0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-.section-head{padding:14px 18px;font-size:20px;font-weight:700;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between}
-.section-head a{font-size:13px;color:#007185;font-weight:400;cursor:pointer}
-.section-head a:hover{color:#c7511f;text-decoration:underline}
-#products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:1px;background:#e7e7e7}
-.prod-card{background:#fff;padding:14px;cursor:pointer;display:flex;flex-direction:column;transition:box-shadow .15s;position:relative}
-.prod-card:hover{box-shadow:0 0 0 2px #febd69 inset;z-index:1}
-.prod-badge{position:absolute;top:10px;left:10px;background:#cc0c39;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px}
-.prod-img-wrap{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden}
-.prod-img-wrap img{max-width:100%;max-height:100%;object-fit:contain}
-.prod-name{font-size:13px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:5px;color:#0f1111}
-.prod-stars{font-size:12px;color:#888;margin-bottom:4px}
-.prod-stars span{color:#f0c14b}
-.prod-price{margin-bottom:10px}
-.prod-price .curr{font-size:13px;color:#0f1111;vertical-align:top;margin-top:3px;display:inline-block}
-.prod-price .amt{font-size:22px;font-weight:700;color:#0f1111;line-height:1}
-.prod-price .mrp{font-size:12px;color:#888;text-decoration:line-through;margin-left:4px}
-.prod-price .disc{font-size:12px;color:#cc0c39;font-weight:600;margin-left:4px}
-.prod-delivery{font-size:12px;color:#007600;margin-bottom:8px}
-.prod-btns{margin-top:auto;display:flex;gap:6px}
-.btn-cart{flex:1;background:#ffd814;border:1px solid #fcd200;border-radius:20px;padding:7px 4px;font-size:13px;font-weight:600;cursor:pointer;color:#0f1111}
-.btn-cart:hover{background:#f7ca00}
-.btn-buy{flex:1;background:#ffa41c;border:1px solid #ff8f00;border-radius:20px;padding:7px 4px;font-size:13px;font-weight:600;cursor:pointer;color:#0f1111}
-.btn-buy:hover{background:#fa8900}
-#no-prods{text-align:center;padding:60px 20px;color:#888;background:#fff}
+<link rel="stylesheet" href="style.css">
 
-/* ═══ CART SIDEBAR ═══ */
-#cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000}
-#cart-overlay.open{display:block}
-#cart-sidebar{position:fixed;top:0;right:-440px;width:440px;max-width:100vw;height:100vh;background:#fff;z-index:2001;transition:right .28s ease;display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.2)}
-#cart-sidebar.open{right:0}
-#cart-head{background:#131921;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
-#cart-head h3{font-size:16px}
-#cart-head button{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1}
-#cart-body{flex:1;overflow-y:auto;padding:12px}
-.cart-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid #eee}
-.cart-item img{width:72px;height:72px;object-fit:contain;border:1px solid #eee;border-radius:4px;flex-shrink:0}
-.ci-info{flex:1;min-width:0}
-.ci-name{font-size:13px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ci-price{color:#B12704;font-weight:700;font-size:15px;margin-bottom:6px}
-.ci-qty{display:flex;align-items:center;gap:8px}
-.qty-btn{width:28px;height:28px;border-radius:50%;border:1px solid #ccc;background:#f7f7f7;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700}
-.qty-btn:hover{background:#febd69;border-color:#f3a847}
-.ci-del{color:#c7511f;font-size:12px;cursor:pointer;margin-left:auto;align-self:center}
-.ci-del:hover{text-decoration:underline}
-#cart-empty{text-align:center;padding:60px 20px;color:#888}
-#cart-empty .cart-empty-icon{font-size:48px;margin-bottom:12px}
-#cart-foot{padding:16px;border-top:2px solid #eee}
-#cart-subtotal{font-size:16px;margin-bottom:12px}
-#cart-subtotal b{color:#B12704;font-size:19px}
-.btn-checkout{width:100%;background:#ffa41c;border:1px solid #ff8f00;border-radius:4px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;color:#0f1111}
-.btn-checkout:hover{background:#fa8900}
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-/* ═══ MODALS ═══ */
-.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;padding:16px}
-.moverlay.open{display:flex}
-.mbox{background:#fff;border-radius:8px;padding:24px;width:100%;max-height:92vh;overflow-y:auto;position:relative}
-.mbox.sm{max-width:420px}
-.mbox.md{max-width:560px}
-.mbox.lg{max-width:700px}
-.mclose{position:absolute;top:12px;right:16px;font-size:24px;cursor:pointer;color:#888;background:none;border:none;line-height:1}
-.mclose:hover{color:#000}
-.mtitle{font-size:22px;font-weight:700;margin-bottom:4px;color:#131921}
-.msub{font-size:13px;color:#666;margin-bottom:20px}
-.fg{margin-bottom:14px}
-.fg label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:#333}
-.fg input,.fg select,.fg textarea{width:100%;padding:9px 11px;border:1px solid #aaa;border-radius:4px;font-size:14px;transition:border-color .2s;font-family:inherit}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#febd69;outline:2px solid #febd6940}
-.fg textarea{resize:vertical;min-height:65px}
-.fg .hint{font-size:11px;color:#888;margin-top:3px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn-main{width:100%;background:#ffd814;border:1px solid #fcd200;border-radius:4px;padding:11px;font-size:15px;font-weight:700;cursor:pointer;color:#0f1111;margin-top:4px}
-.btn-main:hover{background:#f7ca00}
-.btn-sec{width:100%;background:#fff;border:1px solid #888;border-radius:4px;padding:10px;font-size:14px;cursor:pointer;margin-top:8px;color:#0f1111}
-.btn-sec:hover{background:#f5f5f5}
-.divline{text-align:center;margin:14px 0;color:#888;font-size:12px;position:relative}
-.divline::before,.divline::after{content:'';position:absolute;top:50%;width:46%;height:1px;background:#ddd}
-.divline::before{left:0}.divline::after{right:0}
-
-/* ═══ PRODUCT DETAIL ═══ */
-#pdmodal .pd-wrap{display:flex;gap:16px;flex-wrap:wrap}
-#pdmodal .pd-imgs{flex:0 0 260px;max-width:260px}
-#pdmodal .pd-thumbs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-#pdmodal .pd-thumbs img{width:50px;height:50px;object-fit:contain;border:2px solid #ddd;border-radius:4px;cursor:pointer}
-#pdmodal .pd-thumbs img.active{border-color:#febd69}
-#pdmodal .pd-main img{width:100%;max-height:260px;object-fit:contain;border:1px solid #eee;border-radius:4px}
-#pdmodal .pd-info{flex:1;min-width:220px}
-#pdmodal .pd-name{font-size:16px;font-weight:700;margin-bottom:8px;line-height:1.4}
-#pdmodal .pd-stars{font-size:13px;color:#888;margin-bottom:10px}
-#pdmodal .pd-pricebox{background:#f7f7f7;border:1px solid #e0e0e0;border-radius:6px;padding:12px;margin-bottom:12px}
-#pdmodal .pd-price{font-size:28px;font-weight:700;color:#0f1111}
-#pdmodal .pd-price .curr{font-size:14px;vertical-align:top;margin-top:4px;display:inline-block}
-#pdmodal .pd-mrp{font-size:13px;color:#888}
-#pdmodal .pd-disc{color:#cc0c39;font-weight:600;font-size:13px}
-#pdmodal .pd-desc{font-size:13px;color:#333;line-height:1.6;margin-bottom:14px}
-#pdmodal .pd-btns{display:flex;gap:8px}
-#pdmodal .pd-btns button{flex:1;padding:11px;font-size:14px;font-weight:700;border-radius:4px;cursor:pointer}
-
-/* ═══ ADDRESS FORM ═══ */
-.addr-saved{background:#f0fff4;border:1px solid #b2dfdb;border-radius:6px;padding:12px;font-size:13px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start}
-.addr-saved .change-link{color:#007185;cursor:pointer;font-size:12px;white-space:nowrap;margin-left:8px}
-.addr-saved .change-link:hover{text-decoration:underline}
-
-/* ═══ ORDER CONFIRM ═══ */
-#confirm-modal .conf-head{text-align:center;padding:8px 0 16px}
-#confirm-modal .conf-icon{font-size:52px;margin-bottom:8px}
-#confirm-modal .conf-title{font-size:20px;font-weight:700;color:#007600}
-#confirm-modal .conf-sub{font-size:13px;color:#666;margin-top:4px}
-#confirm-modal .conf-items{border:1px solid #eee;border-radius:6px;overflow:hidden;margin:14px 0}
-.conf-item{display:flex;gap:10px;padding:12px;border-bottom:1px solid #eee;align-items:center}
-.conf-item:last-child{border-bottom:none}
-.conf-item img{width:56px;height:56px;object-fit:contain;border:1px solid #eee;border-radius:4px;flex-shrink:0}
-.conf-item-info .name{font-size:13px;font-weight:600;margin-bottom:2px}
-.conf-item-info .price{color:#B12704;font-weight:700;font-size:14px}
-.conf-addr-box{background:#f7f7f7;border:1px solid #ddd;border-radius:6px;padding:12px;font-size:13px;margin-bottom:14px}
-.conf-addr-box b{display:block;margin-bottom:4px;font-size:14px}
-
-/* ═══ MY ORDERS ═══ */
-.order-card{border:1px solid #ddd;border-radius:6px;margin-bottom:14px;overflow:hidden}
-.order-card-head{background:#f7f7f7;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;font-size:12px;color:#555;border-bottom:1px solid #ddd}
-.order-card-head b{color:#131921;font-size:13px}
-.order-card-item{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid #f0f0f0;align-items:flex-start}
-.order-card-item:last-of-type{border-bottom:none}
-.order-card-item img{width:64px;height:64px;object-fit:contain;border:1px solid #eee;border-radius:4px;flex-shrink:0}
-.oi-info{flex:1}
-.oi-name{font-size:13px;font-weight:600;margin-bottom:3px}
-.oi-price{font-size:14px;color:#B12704;font-weight:700;margin-bottom:8px}
-.oi-actions{display:flex;gap:8px;flex-wrap:wrap}
-.oi-actions button{font-size:12px;padding:5px 12px;border-radius:4px;cursor:pointer;border:1px solid #ddd;background:#fff;font-family:inherit}
-.oi-actions .btn-cancel-o{color:#c7511f;border-color:#c7511f}
-.oi-actions .btn-cancel-o:hover{background:#fff5f0}
-.oi-actions .btn-return-o{color:#007185;border-color:#007185}
-.oi-actions .btn-return-o:hover{background:#f0fafb}
-.track-bar-wrap{padding:0 16px 14px}
-.track-steps{display:flex;justify-content:space-between;position:relative;margin-bottom:6px}
-.track-steps::before{content:'';position:absolute;top:10px;left:10%;right:10%;height:3px;background:#ddd;z-index:0}
-.track-step{display:flex;flex-direction:column;align-items:center;font-size:10px;color:#888;z-index:1;flex:1}
-.track-dot{width:22px;height:22px;border-radius:50%;border:3px solid #ddd;background:#fff;margin-bottom:4px;display:flex;align-items:center;justify-content:center;font-size:10px}
-.track-step.done .track-dot{background:#febd69;border-color:#f3a847;color:#131921}
-.track-step.done{color:#131921;font-weight:600}
-
-/* ═══ FOOTER ═══ */
-#back-top{background:#37475a;color:#fff;text-align:center;padding:13px;font-size:13px;cursor:pointer}
-#back-top:hover{background:#485769}
-footer{background:#131921;color:#ccc}
-.footer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:24px;padding:32px 24px}
-.footer-col h4{color:#fff;font-size:14px;margin-bottom:12px}
-.footer-col ul{list-style:none}
-.footer-col ul li{font-size:13px;margin-bottom:7px;cursor:pointer}
-.footer-col ul li:hover{text-decoration:underline}
-.footer-bottom{background:#0f1111;text-align:center;padding:16px;font-size:12px;color:#888;display:flex;align-items:center;justify-content:center;gap:8px}
-#secret-btn{color:#0f1111;cursor:pointer;font-size:8px;user-select:none}
-
-/* ═══ TOAST ═══ */
-#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#232f3e;color:#fff;padding:11px 22px;border-radius:6px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
-#toast.show{opacity:1}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:768px){
-  .row2{grid-template-columns:1fr}
-  #pdmodal .pd-imgs{flex:0 0 100%;max-width:100%}
-  #products-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:480px){
-  #navbar{gap:4px}
-  .nav-deliver,.nav-account small{display:none}
-  #cart-sidebar{width:100vw}
-}
-</style>
 </head>
+
 <body>
 
-<!-- ══════════ NAVBAR ══════════ -->
-<nav id="navbar">
-  <div class="nav-logo" onclick="scrollTo(0,0)">
-    <img src="lg.png" alt="X Bazaar" id="logo-img" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='block'"/>
-    <span class="nav-logo-text" id="logo-fallback" style="display:none">X Bazaar</span>
-  </div>
+<!-- ==========================
+TOP HEADER
+=========================== -->
 
-  <div class="nav-deliver" onclick="openLoginModal()">
-    <small>Deliver to</small>
-    <b>📍 India</b>
-  </div>
+<header class="header">
 
-  <div id="searchbar">
-    <select id="cat-select" onchange="filterProducts()">
-      <option value="">All</option>
-    </select>
-    <input type="text" id="search-inp" placeholder="Search X Bazaar…" oninput="filterProducts()" onkeydown="if(event.key==='Enter')filterProducts()"/>
-    <button onclick="filterProducts()">🔍</button>
-  </div>
+<div class="logo-box">
 
-  <div class="nav-account" onclick="openLoginModal()">
-    <small>Hello, <span id="greet">Sign In</span></small>
-    <b>Account ▾</b>
-  </div>
+<img src="lg.png" class="logo">
 
-  <div class="nav-account" onclick="openOrdersModal()" style="cursor:pointer">
-    <small>Returns</small>
-    <b>& Orders</b>
-  </div>
+<div class="brand">
 
-  <div id="nav-cart" onclick="openCart()">
-    <span id="cart-count">0</span>
-    <b>🛒 Cart</b>
-  </div>
+<h2>X Bazaar</h2>
+
+<p>India's Trusted Store</p>
+
+</div>
+
+</div>
+
+
+
+<div class="location">
+
+<i class="fa-solid fa-location-dot"></i>
+
+<div>
+
+<span>Deliver to</span>
+
+<h4 id="locationText">
+Your Address
+</h4>
+
+</div>
+
+</div>
+
+
+
+<div class="search-box">
+
+<select>
+
+<option>All</option>
+
+</select>
+
+<input
+type="text"
+id="searchBox"
+placeholder="Search X Bazaar">
+
+<button>
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+</button>
+
+</div>
+
+
+
+<div class="header-right">
+
+<div class="account">
+
+<small>Hello, Sign in</small>
+
+<h4 id="loginBtn">
+Account
+</h4>
+
+</div>
+
+<div class="orders">
+
+<small>Returns</small>
+
+<h4>& Orders</h4>
+
+</div>
+
+<div class="cart">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+<span id="cartCount">
+0
+</span>
+
+</div>
+
+</div>
+
+</header>
+
+
+
+
+
+<!-- ==========================
+NAVIGATION
+=========================== -->
+
+<nav class="navbar">
+
+<div class="menu">
+
+<i class="fa-solid fa-bars"></i>
+
+All
+
+</div>
+
+<ul id="categoryBar">
+
+<li class="active">
+Home
+</li>
+
+<!-- Categories JS se load hongi -->
+
+</ul>
+
 </nav>
 
-<!-- ══════════ SUBNAV ══════════ -->
-<div id="subnav">
-  <div class="snav-item active-cat" onclick="filterByCategory('')">☰ All</div>
+
+
+
+
+<!-- ==========================
+HERO SECTION
+=========================== -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+<h1>
+
+Welcome to
+
+<span>
+
+X Bazaar
+
+</span>
+
+</h1>
+
+<p>
+
+Best Deals • Lowest Prices • Trusted Products
+
+</p>
+
+<button>
+
+Shop Now
+
+</button>
+
 </div>
 
-<!-- ══════════ HERO ══════════ -->
-<div id="hero">
-  <img id="hero-img" src="https://m.media-amazon.com/images/I/71qid7ZNKBL._SX3000_.jpg" alt="Sale"
-    onerror="this.src='https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&h=400&fit=crop'"/>
-  <div id="hero-fade"></div>
+</section>
+
+
+
+
+
+<!-- ==========================
+PRODUCT SECTION
+=========================== -->
+
+<section class="products-section">
+
+<div class="section-title">
+
+<h2>
+
+Today's Deals
+
+</h2>
+
 </div>
 
-<!-- ══════════ PRODUCTS ══════════ -->
-<div class="section-wrap">
-  <div class="section-head">
-    <span>🔥 Today's Deals</span>
-    <a onclick="filterByCategory('')">See all deals</a>
-  </div>
-  <div id="products-grid"></div>
-  <div id="no-prods" style="display:none">
-    <div style="font-size:40px;margin-bottom:10px">🔍</div>
-    <b>No products found</b><br><small>Try a different search or category</small>
-  </div>
+
+
+<div id="productsGrid"
+class="products-grid">
+
+<!-- Product Cards Google Sheets se aayenge -->
+
 </div>
 
-<!-- ══════════ FOOTER ══════════ -->
-<div id="back-top" onclick="scrollTo({top:0,behavior:'smooth'})">▲ Back to top</div>
-<footer>
-  <div class="footer-grid">
-    <div class="footer-col"><h4>Get to Know Us</h4><ul><li>About X Bazaar</li><li>Careers</li><li>Press Releases</li></ul></div>
-    <div class="footer-col"><h4>Make Money With Us</h4><ul><li>Sell on X Bazaar</li><li>Become an Affiliate</li></ul></div>
-    <div class="footer-col"><h4>Let Us Help You</h4><ul><li onclick="openLoginModal()">Your Account</li><li onclick="openOrdersModal()">Your Orders</li><li>Returns & Replacements</li></ul></div>
-    <div class="footer-col"><h4>Connect With Us</h4><ul><li>Facebook</li><li>Instagram</li><li>Twitter</li></ul></div>
-  </div>
-  <div class="footer-bottom">
-    © 2024 X Bazaar — All Rights Reserved
-    <span id="secret-btn" onclick="goAdmin()" title="">·</span>
-  </div>
+</section>
+<!-- ==========================
+LOGIN POPUP
+========================== -->
+
+<div class="login-modal" id="loginModal">
+
+    <div class="login-box">
+
+        <span class="close-login" id="closeLogin">&times;</span>
+
+        <h2>Login to X Bazaar</h2>
+
+        <input
+            type="text"
+            id="customerName"
+            placeholder="Enter Your Name">
+
+        <input
+            type="tel"
+            id="customerPhone"
+            maxlength="10"
+            placeholder="10 Digit Mobile Number">
+
+        <button id="saveLogin">
+            Continue
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================
+SHOPPING CART DRAWER
+========================== -->
+
+<div class="cart-sidebar" id="cartSidebar">
+
+    <div class="cart-header">
+
+        <h2>Shopping Cart</h2>
+
+        <span id="closeCart">&times;</span>
+
+    </div>
+
+    <div id="cartItems">
+
+        <p class="empty-cart">
+            Your cart is empty.
+        </p>
+
+    </div>
+
+    <div class="cart-footer">
+
+        <h3>
+
+            Total :
+            ₹<span id="cartTotal">0</span>
+
+        </h3>
+
+        <button id="checkoutBtn">
+
+            Proceed to Checkout
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+
+
+<!-- ==========================
+PRODUCT QUICK VIEW
+========================== -->
+
+<div class="product-popup" id="productPopup">
+
+    <div class="popup-content">
+
+        <span id="closePopup">&times;</span>
+
+        <img
+            id="popupImage"
+            src="">
+
+        <h2 id="popupName"></h2>
+
+        <h3 id="popupPrice"></h3>
+
+        <p id="popupDescription"></p>
+
+        <button id="popupCart">
+
+            Add to Cart
+
+        </button>
+
+        <button id="popupBuy">
+
+            Buy Now
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+
+
+<!-- ==========================
+FOOTER
+========================== -->
+
+<footer class="footer">
+
+    <div class="footer-top">
+
+        Back to Top
+
+    </div>
+
+    <div class="footer-links">
+
+        <div>
+
+            <h3>Get to Know Us</h3>
+
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+            <a href="#">Privacy</a>
+
+        </div>
+
+        <div>
+
+            <h3>Customer Service</h3>
+
+            <a href="#">My Orders</a>
+            <a href="#">Return Policy</a>
+            <a href="#">Help Center</a>
+
+        </div>
+
+        <div>
+
+            <h3>Connect</h3>
+
+            <a href="#">WhatsApp</a>
+            <a href="#">Instagram</a>
+            <a href="#">Facebook</a>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <img src="lg.png" class="footer-logo">
+
+        <p>
+
+            © 2026 X Bazaar
+
+            All Rights Reserved
+
+        </p>
+
+        <!-- Secret Admin Link -->
+
+        <a href="admin.html"
+           class="admin-link">
+
+            Admin
+
+        </a>
+
+    </div>
+
 </footer>
 
-<!-- ══════════ TOAST ══════════ -->
-<div id="toast"></div>
 
-<!-- ══════════ CART SIDEBAR ══════════ -->
-<div id="cart-overlay" onclick="closeCart()"></div>
-<div id="cart-sidebar">
-  <div id="cart-head">
-    <h3>🛒 Shopping Cart</h3>
-    <button onclick="closeCart()">✕</button>
-  </div>
-  <div id="cart-body"></div>
-  <div id="cart-foot" style="display:none">
-    <div id="cart-subtotal"></div>
-    <button class="btn-checkout" onclick="startCheckout()">Proceed to Buy</button>
-  </div>
+
+
+
+<!-- ==========================
+LOADING SCREEN
+========================== -->
+
+<div id="loadingScreen">
+
+    <div class="loader"></div>
+
 </div>
 
-<!-- ══════════ LOGIN MODAL ══════════ -->
-<div class="moverlay" id="login-modal">
-  <div class="mbox sm">
-    <button class="mclose" onclick="closeModal('login-modal')">✕</button>
-    <div class="mtitle">Sign In</div>
-    <div class="msub">New customer? We'll set up your account automatically.</div>
-    <div class="fg"><label>Full Name</label><input type="text" id="ln-name" placeholder="Enter your full name"/></div>
-    <div class="fg"><label>Mobile Number</label><input type="tel" id="ln-phone" placeholder="10-digit mobile number" maxlength="10" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <button class="btn-main" onclick="doLogin()">Continue →</button>
-    <p style="font-size:11px;color:#888;text-align:center;margin-top:10px">By continuing, you agree to X Bazaar's conditions of use.</p>
-  </div>
-</div>
 
-<!-- ══════════ PRODUCT DETAIL MODAL ══════════ -->
-<div class="moverlay" id="pdmodal">
-  <div class="mbox lg" id="pdmodal-inner">
-    <button class="mclose" onclick="closeModal('pdmodal')">✕</button>
-    <div id="pd-content"></div>
-  </div>
-</div>
 
-<!-- ══════════ ADDRESS MODAL ══════════ -->
-<div class="moverlay" id="addr-modal">
-  <div class="mbox sm">
-    <button class="mclose" onclick="closeModal('addr-modal')">✕</button>
-    <div class="mtitle">Delivery Address</div>
-    <div class="msub">Where should we deliver your order?</div>
-    <div class="row2">
-      <div class="fg"><label>Full Name *</label><input type="text" id="a-name" placeholder="Your name"/></div>
-      <div class="fg"><label>Mobile *</label><input type="tel" id="a-phone" placeholder="10-digit number" maxlength="10"/></div>
-    </div>
-    <div class="fg">
-      <label>Pincode *</label>
-      <input type="text" id="a-pin" placeholder="6-digit pincode" maxlength="6" oninput="fetchPincode(this.value)"/>
-      <div class="hint" id="pin-hint"></div>
-    </div>
-    <div class="row2">
-      <div class="fg"><label>City</label><input type="text" id="a-city" placeholder="Auto-filled"/></div>
-      <div class="fg"><label>State</label><input type="text" id="a-state" placeholder="Auto-filled"/></div>
-    </div>
-    <div class="fg"><label>House No / Flat / Building *</label><input type="text" id="a-house" placeholder="e.g. 42, Sunrise Apartments"/></div>
-    <div class="fg"><label>Street / Area / Locality *</label><input type="text" id="a-street" placeholder="e.g. MG Road, Sector 15"/></div>
-    <div class="fg"><label>Landmark (optional)</label><input type="text" id="a-landmark" placeholder="e.g. Near Post Office"/></div>
-    <div class="fg">
-      <label>Address Type</label>
-      <select id="a-type"><option value="Home">🏠 Home</option><option value="Work">🏢 Work</option><option value="Other">📍 Other</option></select>
-    </div>
-    <button class="btn-main" onclick="saveAddress()">Save & Continue →</button>
-  </div>
-</div>
 
-<!-- ══════════ CHECKOUT MODAL ══════════ -->
-<div class="moverlay" id="checkout-modal">
-  <div class="mbox md">
-    <button class="mclose" onclick="closeModal('checkout-modal')">✕</button>
-    <div class="mtitle">Review Your Order</div>
-    <div id="checkout-content"></div>
-  </div>
-</div>
 
-<!-- ══════════ ORDER CONFIRM MODAL ══════════ -->
-<div class="moverlay" id="confirm-modal">
-  <div class="mbox md" id="confirm-content"></div>
-</div>
+<!-- ==========================
+SCRIPT FILES
+========================== -->
 
-<!-- ══════════ MY ORDERS MODAL ══════════ -->
-<div class="moverlay" id="orders-modal">
-  <div class="mbox lg">
-    <button class="mclose" onclick="closeModal('orders-modal')">✕</button>
-    <div class="mtitle">My Orders</div>
-    <div id="orders-content" style="margin-top:16px"></div>
-  </div>
-</div>
+<script src="app.js"></script>
 
-<!-- ══════════════════ JAVASCRIPT ══════════════════ -->
-<script>
-// ━━━━ CONFIG ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const GITHUB_TOKEN  = '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';
-const GITHUB_REPO   = 'xbazaar';   // your repo name
-const GITHUB_USER   = '';          // will be detected
-const WA_NUMBER1    = '919559515681';
-const WA_NUMBER2    = '919554779407';
-const ADMIN_URL     = 'xbazaar-control-9f4k2m.html';
-const ADMIN_PWD     = 'xbazaar@admin2024';
-
-// ━━━━ STATE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-let allProducts  = [];
-let cart         = JSON.parse(localStorage.getItem('xb_cart')  || '[]');
-let user         = JSON.parse(localStorage.getItem('xb_user')  || 'null');
-let checkoutCart = [];
-
-// ━━━━ BOOT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(async function init(){
-  updateGreeting();
-  updateCartBadge();
-  await loadProducts();
-})();
-
-// ━━━━ LOAD PRODUCTS ━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadProducts(){
-  try {
-    const r = await fetch('products.json?v=' + Date.now());
-    if(r.ok) allProducts = await r.json();
-  } catch(e){}
-
-  // Demo fallback
-  if(!allProducts.length){
-    allProducts = [
-      {id:'d1',name:'Wireless Bluetooth Earbuds – 40H Battery, Deep Bass',price:799,originalPrice:2999,category:'Electronics',image:'https://m.media-amazon.com/images/I/51KRsQOrdNL._AC_SX300_SY300_.jpg',gallery:[],meeshoLink:'https://meesho.com',description:'Premium sound quality with deep bass. 40 hours total playback. IPX5 water resistant.'},
-      {id:'d2',name:'Men\'s Casual Cotton T-Shirt – Pack of 3 (S/M/L/XL)',price:499,originalPrice:1299,category:'Clothing',image:'https://m.media-amazon.com/images/I/71mFEnRiyUL._AC_UL320_.jpg',gallery:[],meeshoLink:'https://meesho.com',description:'100% pure cotton. Pre-shrunk fabric. Available in multiple colors.'},
-      {id:'d3',name:'Non-Stick Cookware Set 5 Pcs – Induction Compatible',price:1299,originalPrice:3499,category:'Kitchen',image:'https://m.media-amazon.com/images/I/71N6hBfUe6L._AC_SX300_SY300_.jpg',gallery:[],meeshoLink:'https://meesho.com',description:'Food-grade non-stick coating. Works on all cooktops.'},
-      {id:'d4',name:'Running Sports Shoes – Lightweight Mesh, Anti-Slip',price:699,originalPrice:1999,category:'Footwear',image:'https://m.media-amazon.com/images/I/71FzNhSrZ-L._AC_SX300_SY300_.jpg',gallery:[],meeshoLink:'https://meesho.com',description:'Breathable mesh upper. Anti-slip rubber sole.'},
-      {id:'d5',name:'RGB LED Strip 5M – Music Sync, App Control',price:349,originalPrice:999,category:'Electronics',image:'https://m.media-amazon.com/images/I/71c+rEktzlL._AC_SX300_SY300_.jpg',gallery:[],meeshoLink:'https://meesho.com',description:'16 million colors. Works with Alexa & Google Home.'},
-      {id:'d6',name:'Women\'s Floral Anarkali Kurta – Pure Cotton',price:399,originalPrice:1199,category:'Clothing',image:'https://m.media-amazon.com/images/I/71mEzJF5i1L._AC_UL320_.jpg',gallery:[],meeshoLink:'https://meesho.com',description:'Elegant floral print. Machine washable pure cotton.'},
-    ];
-  }
-  buildCatNav();
-  renderProducts(allProducts);
-}
-
-// ━━━━ CATEGORY NAV ━━━━━━━━━━━━━━━━━━━━━━━━━━
-function buildCatNav(){
-  const cats = [...new Set(allProducts.map(p=>p.category).filter(Boolean))];
-  const subnav = document.getElementById('subnav');
-  const sel    = document.getElementById('cat-select');
-  // Clear
-  while(subnav.children.length > 1) subnav.removeChild(subnav.lastChild);
-  while(sel.options.length > 1)     sel.remove(1);
-
-  cats.forEach(c=>{
-    const d = document.createElement('div');
-    d.className='snav-item'; d.textContent=c;
-    d.onclick=()=>filterByCategory(c);
-    subnav.appendChild(d);
-    const o = document.createElement('option');
-    o.value=c; o.textContent=c;
-    sel.appendChild(o);
-  });
-}
-
-// ━━━━ RENDER PRODUCTS ━━━━━━━━━━━━━━━━━━━━━━━
-function renderProducts(list){
-  const grid = document.getElementById('products-grid');
-  const none = document.getElementById('no-prods');
-  grid.innerHTML = '';
-  if(!list.length){ none.style.display='block'; return; }
-  none.style.display = 'none';
-
-  list.forEach(p=>{
-    const disc = p.originalPrice ? Math.round((1 - p.price/p.originalPrice)*100) : 0;
-    const stars = (3.5 + Math.random()*1.4).toFixed(1);
-    const rev   = Math.floor(Math.random()*8000)+200;
-    const card  = document.createElement('div');
-    card.className='prod-card';
-    card.innerHTML=`
-      ${disc>=20 ? `<div class="prod-badge">${disc}% off</div>` : ''}
-      <div class="prod-img-wrap" onclick="openProduct('${p.id}')">
-        <img src="${p.image||''}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200x200/f5f5f5/aaa?text=No+Image'"/>
-      </div>
-      <div class="prod-name" onclick="openProduct('${p.id}')">${p.name}</div>
-      <div class="prod-stars"><span>${'★'.repeat(Math.floor(stars))}${'☆'.repeat(5-Math.floor(stars))}</span> ${stars} (${rev.toLocaleString('en-IN')})</div>
-      <div class="prod-price">
-        <span class="curr">₹</span><span class="amt">${p.price.toLocaleString('en-IN')}</span>
-        ${p.originalPrice ? `<span class="mrp">₹${p.originalPrice.toLocaleString('en-IN')}</span><span class="disc">${disc}% off</span>` : ''}
-      </div>
-      <div class="prod-delivery">✓ FREE Delivery by Tomorrow</div>
-      <div class="prod-btns">
-        <button class="btn-cart" onclick="addToCart('${p.id}',event)">Add to Cart</button>
-        <button class="btn-buy"  onclick="buyNow('${p.id}',event)">Buy Now</button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-// ━━━━ FILTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function filterProducts(){
-  const q   = document.getElementById('search-inp').value.toLowerCase();
-  const cat = document.getElementById('cat-select').value;
-  renderProducts(allProducts.filter(p=>
-    (!q   || p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q)) &&
-    (!cat || p.category===cat)
-  ));
-}
-
-function filterByCategory(cat){
-  document.getElementById('cat-select').value = cat;
-  document.getElementById('search-inp').value = '';
-  // Highlight active
-  document.querySelectorAll('.snav-item').forEach(el=>{
-    el.classList.toggle('active-cat', el.textContent===cat || (cat==='' && el.textContent==='☰ All'));
-  });
-  filterProducts();
-  scrollTo({top:0,behavior:'smooth'});
-}
-
-// ━━━━ PRODUCT DETAIL ━━━━━━━━━━━━━━━━━━━━━━━━
-function openProduct(id){
-  const p = allProducts.find(x=>x.id===id);
-  if(!p) return;
-  const imgs  = [p.image,...(p.gallery||[])].filter(Boolean);
-  const disc  = p.originalPrice ? Math.round((1-p.price/p.originalPrice)*100) : 0;
-  const stars = (3.5+Math.random()*1.4).toFixed(1);
-  const rev   = Math.floor(Math.random()*8000)+200;
-
-  document.getElementById('pd-content').innerHTML = `
-    <div class="pd-wrap">
-      <div class="pd-imgs">
-        ${imgs.length>1 ? `<div class="pd-thumbs">${imgs.map((img,i)=>`<img src="${img}" class="${i===0?'active':''}" onclick="switchPdImg(this,'${img}')"/>`).join('')}</div>` : ''}
-        <div class="pd-main"><img id="pd-main-img" src="${imgs[0]||''}" onerror="this.src='https://via.placeholder.com/260x260?text=No+Image'"/></div>
-      </div>
-      <div class="pd-info">
-        <div class="pd-name">${p.name}</div>
-        <div class="pd-stars"><span style="color:#f0c14b">${'★'.repeat(Math.floor(stars))}</span> ${stars} — ${rev.toLocaleString('en-IN')} ratings</div>
-        <div class="pd-pricebox">
-          <div class="pd-price"><span class="curr">₹</span>${p.price.toLocaleString('en-IN')}</div>
-          ${p.originalPrice ? `<div class="pd-mrp">M.R.P.: <s>₹${p.originalPrice.toLocaleString('en-IN')}</s> <span class="pd-disc">(${disc}% off)</span></div>` : ''}
-          <div style="font-size:12px;color:#555;margin-top:4px">Inclusive of all taxes</div>
-          <div style="font-size:13px;color:#007600;margin-top:4px;font-weight:600">✓ FREE Delivery — Order within 2 hours</div>
-        </div>
-        ${p.description ? `<div class="pd-desc">${p.description}</div>` : ''}
-        <div class="pd-btns">
-          <button class="btn-cart" onclick="addToCart('${p.id}');closeModal('pdmodal')">Add to Cart</button>
-          <button class="btn-buy"  onclick="closeModal('pdmodal');buyNow('${p.id}')">Buy Now</button>
-        </div>
-      </div>
-    </div>
-  `;
-  openModal('pdmodal');
-}
-
-function switchPdImg(el, src){
-  document.getElementById('pd-main-img').src = src;
-  el.closest('.pd-thumbs').querySelectorAll('img').forEach(i=>i.classList.remove('active'));
-  el.classList.add('active');
-}
-
-// ━━━━ CART ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function addToCart(id, e){
-  if(e){ e.stopPropagation(); }
-  const p = allProducts.find(x=>x.id===id);
-  if(!p) return;
-  const ex = cart.find(c=>c.id===id);
-  if(ex) ex.qty++;
-  else   cart.push({...p, qty:1});
-  saveCart(); updateCartBadge(); renderCartBody();
-  showToast('✅ Added to cart!');
-}
-
-function removeFromCart(id){
-  cart = cart.filter(c=>c.id!==id);
-  saveCart(); updateCartBadge(); renderCartBody();
-}
-
-function changeQty(id, d){
-  const item = cart.find(c=>c.id===id);
-  if(!item) return;
-  item.qty += d;
-  if(item.qty<=0) removeFromCart(id);
-  else { saveCart(); renderCartBody(); updateCartBadge(); }
-}
-
-function saveCart(){ localStorage.setItem('xb_cart', JSON.stringify(cart)); }
-function updateCartBadge(){ document.getElementById('cart-count').textContent = cart.reduce((s,c)=>s+c.qty,0); }
-
-function openCart(){ document.getElementById('cart-sidebar').classList.add('open'); document.getElementById('cart-overlay').classList.add('open'); renderCartBody(); }
-function closeCart(){ document.getElementById('cart-sidebar').classList.remove('open'); document.getElementById('cart-overlay').classList.remove('open'); }
-
-function renderCartBody(){
-  const body = document.getElementById('cart-body');
-  const foot = document.getElementById('cart-foot');
-  if(!cart.length){
-    body.innerHTML=`<div id="cart-empty"><div class="cart-empty-icon">🛒</div><b>Your cart is empty</b><br><small style="color:#888">Add items to get started</small></div>`;
-    foot.style.display='none'; return;
-  }
-  foot.style.display='block';
-  body.innerHTML = cart.map(item=>`
-    <div class="cart-item">
-      <img src="${item.image||''}" onerror="this.src='https://via.placeholder.com/72?text=?'"/>
-      <div class="ci-info">
-        <div class="ci-name">${item.name}</div>
-        <div class="ci-price">₹${(item.price*item.qty).toLocaleString('en-IN')}</div>
-        <div class="ci-qty">
-          <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
-          <span style="font-weight:700">${item.qty}</span>
-          <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
-          <span class="ci-del" onclick="removeFromCart('${item.id}')">Delete</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-  const total = cart.reduce((s,c)=>s+(c.price*c.qty),0);
-  const count = cart.reduce((s,c)=>s+c.qty,0);
-  document.getElementById('cart-subtotal').innerHTML = `Subtotal (${count} item${count!==1?'s':''}): <b>₹${total.toLocaleString('en-IN')}</b>`;
-}
-
-// ━━━━ BUY NOW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function buyNow(id, e){
-  if(e) e.stopPropagation();
-  const p = allProducts.find(x=>x.id===id);
-  if(!p) return;
-  checkoutCart = [{...p, qty:1}];
-  startCheckoutFlow();
-}
-
-function startCheckout(){
-  if(!cart.length){ showToast('Cart is empty!'); return; }
-  checkoutCart = [...cart];
-  closeCart();
-  startCheckoutFlow();
-}
-
-function startCheckoutFlow(){
-  if(!user){ openModal('login-modal'); showToast('Please sign in to continue'); return; }
-  if(!user.address){ openAddressModal(); return; }
-  renderCheckout();
-  openModal('checkout-modal');
-}
-
-// ━━━━ ADDRESS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function openAddressModal(){
-  if(user){
-    document.getElementById('a-name').value    = user.name || '';
-    document.getElementById('a-phone').value   = user.phone || '';
-    const addr = user.address || {};
-    if(addr.pincode){ document.getElementById('a-pin').value    = addr.pincode; }
-    if(addr.city)   { document.getElementById('a-city').value   = addr.city; }
-    if(addr.state)  { document.getElementById('a-state').value  = addr.state; }
-    if(addr.house)  { document.getElementById('a-house').value  = addr.house; }
-    if(addr.street) { document.getElementById('a-street').value = addr.street; }
-    if(addr.landmark){ document.getElementById('a-landmark').value = addr.landmark; }
-    if(addr.type)   { document.getElementById('a-type').value   = addr.type; }
-  }
-  openModal('addr-modal');
-}
-
-async function fetchPincode(pin){
-  const hint = document.getElementById('pin-hint');
-  if(pin.length !== 6) { hint.textContent=''; return; }
-  hint.textContent = '🔍 Fetching location…';
-  try {
-    const r = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-    const d = await r.json();
-    if(d[0].Status==='Success'){
-      const info = d[0].PostOffice[0];
-      document.getElementById('a-city').value  = info.District;
-      document.getElementById('a-state').value = info.State;
-      hint.textContent = `✅ ${info.District}, ${info.State}`;
-      hint.style.color='#007600';
-    } else {
-      hint.textContent='❌ Invalid pincode'; hint.style.color='#c7511f';
-    }
-  } catch(e){ hint.textContent='Could not fetch location. Enter manually.'; }
-}
-
-function saveAddress(){
-  const name     = document.getElementById('a-name').value.trim();
-  const phone    = document.getElementById('a-phone').value.trim();
-  const pincode  = document.getElementById('a-pin').value.trim();
-  const city     = document.getElementById('a-city').value.trim();
-  const state    = document.getElementById('a-state').value.trim();
-  const house    = document.getElementById('a-house').value.trim();
-  const street   = document.getElementById('a-street').value.trim();
-  const landmark = document.getElementById('a-landmark').value.trim();
-  const type     = document.getElementById('a-type').value;
-
-  if(!name)   { showToast('Please enter your name'); return; }
-  if(!/^\d{10}$/.test(phone)){ showToast('Enter valid 10-digit mobile number'); return; }
-  if(!pincode || pincode.length!==6){ showToast('Enter valid 6-digit pincode'); return; }
-  if(!house)  { showToast('Please enter house/flat number'); return; }
-  if(!street) { showToast('Please enter area/street'); return; }
-
-  user.name  = name;
-  user.phone = phone;
-  user.address = { pincode, city, state, house, street, landmark, type,
-    full: `${house}, ${street}${landmark?', '+landmark:''}, ${city}, ${state} - ${pincode}` };
-  localStorage.setItem('xb_user', JSON.stringify(user));
-  closeModal('addr-modal');
-  renderCheckout();
-  openModal('checkout-modal');
-}
-
-// ━━━━ CHECKOUT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function renderCheckout(){
-  const total = checkoutCart.reduce((s,c)=>s+(c.price*c.qty),0);
-  const addr  = user.address;
-  document.getElementById('checkout-content').innerHTML=`
-    <div class="addr-saved">
-      <div>
-        <b>${user.name} · ${user.phone}</b><br>
-        <span style="font-size:12px;color:#555">${addr.full}</span>
-        <span style="font-size:12px;color:#555"> (${addr.type})</span>
-      </div>
-      <span class="change-link" onclick="closeModal('checkout-modal');openAddressModal()">Change</span>
-    </div>
-    <div style="border:1px solid #eee;border-radius:6px;overflow:hidden;margin-bottom:14px">
-      ${checkoutCart.map(i=>`
-        <div style="display:flex;gap:10px;padding:10px;border-bottom:1px solid #f5f5f5;align-items:center">
-          <img src="${i.image||''}" style="width:50px;height:50px;object-fit:contain;border:1px solid #eee;border-radius:4px" onerror="this.src='https://via.placeholder.com/50?text=?'"/>
-          <div style="flex:1"><div style="font-size:13px;font-weight:600">${i.name}</div><div style="font-size:13px;color:#B12704;font-weight:700">₹${i.price.toLocaleString('en-IN')} × ${i.qty}</div></div>
-        </div>
-      `).join('')}
-      <div style="padding:10px;display:flex;justify-content:space-between;font-size:13px"><span>Delivery Charges</span><span style="color:#007600;font-weight:600">FREE</span></div>
-      <div style="padding:10px;display:flex;justify-content:space-between;font-weight:700;font-size:16px;border-top:1px solid #eee"><span>Order Total</span><span>₹${total.toLocaleString('en-IN')}</span></div>
-    </div>
-    <div class="fg">
-      <label>Payment Method</label>
-      <select id="pay-method">
-        <option value="COD">💵 Cash on Delivery (COD)</option>
-        <option value="UPI">📱 UPI (GPay / PhonePe / Paytm)</option>
-        <option value="Card">💳 Debit / Credit Card</option>
-        <option value="NetBanking">🏦 Net Banking</option>
-      </select>
-    </div>
-    <button class="btn-main" onclick="placeOrder()">Place Order — ₹${total.toLocaleString('en-IN')}</button>
-  `;
-}
-
-// ━━━━ PLACE ORDER ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function placeOrder(){
-  const pay     = document.getElementById('pay-method').value;
-  const orderId = 'XB' + Date.now();
-  const addr    = user.address;
-
-  // Save to local orders
-  const orders = JSON.parse(localStorage.getItem('xb_orders') || '[]');
-  orders.unshift({
-    id: orderId,
-    date: new Date().toLocaleString('en-IN'),
-    items: checkoutCart.map(i=>({...i})),
-    address: addr,
-    customer: { name: user.name, phone: user.phone },
-    payment: pay,
-    status: 'Confirmed'
-  });
-  localStorage.setItem('xb_orders', JSON.stringify(orders));
-
-  // Send to admin orders store
-  const adminOrders = JSON.parse(localStorage.getItem('xb_admin_orders') || '[]');
-  checkoutCart.forEach(item=>{
-    adminOrders.unshift({
-      orderId, date: new Date().toLocaleString('en-IN'),
-      customerName: user.name, phone: user.phone,
-      address: addr.full,
-      productName: item.name, price: item.price, qty: item.qty,
-      meeshoLink: item.meeshoLink || '',
-      payment: pay
-    });
-  });
-  localStorage.setItem('xb_admin_orders', JSON.stringify(adminOrders));
-
-  // Clear cart if checkout was from cart
-  if(checkoutCart.length > 1 || cart.find(c=>c.id===checkoutCart[0]?.id)){
-    cart = []; saveCart(); updateCartBadge();
-  }
-
-  closeModal('checkout-modal');
-  showOrderConfirm(orderId);
-}
-
-// ━━━━ ORDER CONFIRM ━━━━━━━━━━━━━━━━━━━━━━━━━
-function showOrderConfirm(orderId){
-  const total = checkoutCart.reduce((s,c)=>s+(c.price*c.qty),0);
-  document.getElementById('confirm-content').innerHTML=`
-    <button class="mclose" onclick="closeModal('confirm-modal')">✕</button>
-    <div class="conf-head">
-      <div class="conf-icon">🎉</div>
-      <div class="conf-title">Order Placed Successfully!</div>
-      <div class="conf-sub">Order ID: <b>${orderId}</b></div>
-    </div>
-    <div class="conf-items">
-      ${checkoutCart.map(i=>`
-        <div class="conf-item">
-          <img src="${i.image||''}" onerror="this.src='https://via.placeholder.com/56?text=?'"/>
-          <div class="conf-item-info">
-            <div class="name">${i.name}</div>
-            <div class="price">₹${(i.price*i.qty).toLocaleString('en-IN')} × ${i.qty}</div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="conf-addr-box">
-      <b>📦 Delivering to:</b>
-      ${user.name} · ${user.phone}<br>
-      <span style="font-size:12px;color:#555">${user.address.full}</span>
-    </div>
-    <div style="background:#f0fff4;border:1px solid #b2dfdb;border-radius:6px;padding:12px;font-size:13px;margin-bottom:14px;text-align:center">
-      <b style="color:#007600">✓ Estimated Delivery: 5–7 Business Days</b><br>
-      <span style="color:#555">You will receive updates on WhatsApp</span>
-    </div>
-    <button class="btn-main" onclick="closeModal('confirm-modal');openOrdersModal()">View My Orders</button>
-    <button class="btn-sec" onclick="closeModal('confirm-modal')">Continue Shopping</button>
-  `;
-  openModal('confirm-modal');
-}
-
-// ━━━━ MY ORDERS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function openOrdersModal(){
-  if(!user){ openModal('login-modal'); return; }
-  const orders = JSON.parse(localStorage.getItem('xb_orders') || '[]');
-  const el     = document.getElementById('orders-content');
-
-  if(!orders.length){
-    el.innerHTML=`<div style="text-align:center;padding:40px;color:#888"><div style="font-size:40px;margin-bottom:10px">📦</div><b>No orders yet</b><br><small>Your orders will appear here</small></div>`;
-    openModal('orders-modal'); return;
-  }
-
-  const steps = ['Confirmed','Shipped','Out for Delivery','Delivered'];
-
-  el.innerHTML = orders.map(order=>{
-    const stepIdx = steps.indexOf(order.status);
-    const doneIdx = stepIdx >= 0 ? stepIdx : 1;
-    return `
-    <div class="order-card">
-      <div class="order-card-head">
-        <div><small>ORDER PLACED</small><br><b>${order.date}</b></div>
-        <div><small>ORDER ID</small><br><b>${order.id}</b></div>
-        <div><small>STATUS</small><br><b style="color:${order.status==='Delivered'?'#007600':'#c7511f'}">${order.status}</b></div>
-      </div>
-      ${order.items.map(item=>`
-      <div class="order-card-item">
-        <img src="${item.image||''}" onerror="this.src='https://via.placeholder.com/64?text=?'"/>
-        <div class="oi-info">
-          <div class="oi-name">${item.name}</div>
-          <div class="oi-price">₹${item.price.toLocaleString('en-IN')} × ${item.qty}</div>
-          <div class="oi-actions">
-            <button class="btn-cancel-o" onclick="cancelOrder('${order.id}','${item.id}','${encodeURIComponent(item.meeshoLink||'')}','${encodeURIComponent(item.name)}')">Cancel</button>
-            <button class="btn-return-o" onclick="returnOrder('${encodeURIComponent(item.name)}')">Return</button>
-          </div>
-        </div>
-      </div>
-      `).join('')}
-      <div class="track-bar-wrap">
-        <div class="track-steps">
-          ${steps.map((s,i)=>`<div class="track-step ${i<=doneIdx?'done':''}"><div class="track-dot">${i<=doneIdx?'✓':''}</div><div>${s}</div></div>`).join('')}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  openModal('orders-modal');
-}
-
-function cancelOrder(orderId, itemId, encLink, encName){
-  if(!confirm('Cancel this item?')) return;
-  const name = decodeURIComponent(encName);
-  const link = decodeURIComponent(encLink);
-  let orders = JSON.parse(localStorage.getItem('xb_orders') || '[]');
-  orders = orders.map(o=>{
-    if(o.id===orderId) o.items=o.items.filter(i=>i.id!==itemId);
-    return o;
-  }).filter(o=>o.items.length>0);
-  localStorage.setItem('xb_orders', JSON.stringify(orders));
-
-  // WhatsApp notification to admin
-  const msg = encodeURIComponent(`🚨 CANCEL REQUEST\nOrder: ${orderId}\nProduct: ${name}\nLink: ${link}\nCustomer: ${user.name} - ${user.phone}`);
-  window.open(`https://wa.me/${WA_NUMBER1}?text=${msg}`, '_blank');
-
-  showToast('❌ Order cancelled. Refund in 3-5 days.');
-  openOrdersModal();
-}
-
-function returnOrder(encName){
-  const name = decodeURIComponent(encName);
-  const msg  = encodeURIComponent(`Hi! I want to return:\n${name}\n\nPlease find my unboxing video attached. Order ID: —`);
-  window.open(`https://wa.me/${WA_NUMBER1}?text=${msg}`, '_blank');
-}
-
-// ━━━━ LOGIN ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function openLoginModal(){
-  if(user){ openOrdersModal(); return; }
-  openModal('login-modal');
-}
-
-function doLogin(){
-  const name  = document.getElementById('ln-name').value.trim();
-  const phone = document.getElementById('ln-phone').value.trim();
-  if(!name)               { showToast('Please enter your name'); return; }
-  if(!/^\d{10}$/.test(phone)){ showToast('Enter valid 10-digit mobile number'); return; }
-  const prev = JSON.parse(localStorage.getItem('xb_user') || 'null');
-  user = { name, phone, address: prev?.address || null };
-  localStorage.setItem('xb_user', JSON.stringify(user));
-  updateGreeting();
-  closeModal('login-modal');
-  showToast(`Welcome, ${name}! 👋`);
-}
-
-function updateGreeting(){
-  user = JSON.parse(localStorage.getItem('xb_user') || 'null');
-  document.getElementById('greet').textContent = user ? user.name.split(' ')[0] : 'Sign In';
-}
-
-// ━━━━ ADMIN SECRET ━━━━━━━━━━━━━━━━━━━━━━━━━
-function goAdmin(){
-  const pw = prompt('🔐 Admin Password:');
-  if(pw === ADMIN_PWD) window.location.href = ADMIN_URL;
-  else if(pw !== null) showToast('❌ Wrong password');
-}
-
-// ━━━━ MODAL HELPERS ━━━━━━━━━━━━━━━━━━━━━━━━
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.moverlay').forEach(el=>{
-  el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
-});
-
-// ━━━━ TOAST ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-let toastTimer;
-function showToast(msg, dur=3000){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), dur);
-}
-</script>
 </body>
+
 </html>
