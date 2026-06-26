@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin – X Bazaar</title>
+<!-- Robots: hide from search engines -->
+<meta name="robots" content="noindex, nofollow"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#0f1111;min-height:100vh}
+
+/* ═══ AUTH ═══ */
+#auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#131921 0%,#232f3e 100%)}
+.auth-card{background:#fff;border-radius:12px;padding:36px 32px;width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.auth-logo{font-size:30px;font-weight:900;color:#131921;letter-spacing:-1px;margin-bottom:4px}
+.auth-logo span{color:#febd69}
+.auth-sub{font-size:13px;color:#888;margin-bottom:28px}
+.auth-card input{width:100%;padding:11px 14px;border:1px solid #ccc;border-radius:6px;font-size:15px;margin-bottom:12px;font-family:inherit;transition:border-color .2s}
+.auth-card input:focus{border-color:#febd69;outline:2px solid #febd6940}
+.auth-card button{width:100%;background:#febd69;border:none;border-radius:6px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.auth-card button:hover{background:#f3a847}
+.auth-err{color:#c7511f;font-size:13px;margin-top:10px;min-height:18px}
+.auth-lock{font-size:48px;margin-bottom:16px}
+
+/* ═══ APP LAYOUT ═══ */
+#admin-app{display:none;min-height:100vh}
+.a-header{background:#131921;color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.a-brand{font-size:18px;font-weight:800;color:#febd69}
+.a-brand small{font-size:11px;color:#aaa;font-weight:400;margin-left:8px}
+.a-header-right{display:flex;align-items:center;gap:12px}
+.gh-status{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid}
+.gh-status.ok{color:#00c851;border-color:#00c851}
+.gh-status.err{color:#ff4444;border-color:#ff4444}
+.gh-status.loading{color:#febd69;border-color:#febd69}
+.btn-logout{background:none;border:1px solid #febd69;color:#febd69;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px;font-family:inherit}
+.btn-logout:hover{background:#febd6920}
+
+.a-nav{background:#232f3e;display:flex;overflow-x:auto;scrollbar-width:none}
+.a-nav::-webkit-scrollbar{display:none}
+.a-nav-btn{background:none;border:none;color:#ccc;padding:12px 18px;font-size:13px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;font-family:inherit;font-weight:500}
+.a-nav-btn:hover{color:#fff}
+.a-nav-btn.active{color:#febd69;border-bottom-color:#febd69}
+
+.tab{display:none;padding:20px;max-width:1100px;margin:0 auto}
+.tab.active{display:block}
+
+/* ═══ CARDS ═══ */
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-title{font-size:16px;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #eee;color:#131921;display:flex;align-items:center;justify-content:space-between}
+.card-title span{font-size:13px;font-weight:400;color:#888}
+
+/* ═══ FORM ═══ */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#333}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 11px;border:1px solid #ccc;border-radius:4px;font-size:14px;font-family:inherit;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#febd69;outline:2px solid #febd6940}
+.fg textarea{resize:vertical;min-height:100px}
+.fg .hint{font-size:11px;color:#888;margin-top:3px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:600px){.row2,.row3{grid-template-columns:1fr}}
+
+/* ═══ WYSIWYG ═══ */
+.wy-toolbar{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#f5f5f5;border:1px solid #ccc;border-bottom:none;border-radius:4px 4px 0 0}
+.wy-toolbar button{background:#fff;border:1px solid #ddd;border-radius:3px;padding:4px 9px;font-size:13px;cursor:pointer;font-family:inherit;line-height:1.4}
+.wy-toolbar button:hover{background:#febd69;border-color:#f3a847}
+.wy-toolbar select{border:1px solid #ddd;border-radius:3px;padding:3px 6px;font-size:12px;cursor:pointer;background:#fff}
+#desc-editor{border:1px solid #ccc;border-radius:0 0 4px 4px;padding:12px;min-height:130px;outline:none;font-size:14px;line-height:1.6;background:#fff}
+#desc-editor:focus{border-color:#febd69}
+
+/* ═══ IMAGE UPLOAD ═══ */
+.img-drop{border:2px dashed #ccc;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:.2s;background:#fafafa;position:relative}
+.img-drop:hover{border-color:#febd69;background:#fffdf5}
+.img-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.img-drop .drop-icon{font-size:32px;margin-bottom:6px}
+.img-drop p{font-size:13px;color:#555}
+.img-drop small{font-size:11px;color:#888}
+.img-preview-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.img-prev-item{position:relative;width:80px;height:80px}
+.img-prev-item img{width:100%;height:100%;object-fit:cover;border-radius:6px;border:2px solid #ddd}
+.img-prev-item.main-thumb img{border-color:#febd69}
+.img-prev-item .del-img{position:absolute;top:-6px;right:-6px;background:#c7511f;color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.upload-prog{font-size:12px;color:#666;margin-top:8px;padding:6px;background:#f0f0f0;border-radius:4px;display:none}
+
+/* ═══ CATEGORY CHIPS ═══ */
+.cat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.cat-chip{background:#232f3e;color:#fff;padding:6px 14px;border-radius:20px;font-size:13px;display:flex;align-items:center;gap:8px;font-weight:500}
+.cat-chip .rm{background:none;border:none;color:#febd69;cursor:pointer;font-size:15px;line-height:1;padding:0}
+.add-cat-row{display:flex;gap:8px;max-width:380px}
+.add-cat-row input{flex:1;padding:8px 11px;border:1px solid #ccc;border-radius:4px;font-size:14px;font-family:inherit}
+.add-cat-row input:focus{border-color:#febd69;outline:2px solid #febd6940}
+
+/* ═══ BUTTONS ═══ */
+.btn-publish{width:100%;background:#febd69;border:none;border-radius:4px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.btn-publish:hover:not(:disabled){background:#f3a847}
+.btn-publish:disabled{background:#ddd;color:#aaa;cursor:not-allowed}
+.btn-sm{background:#fff;border:1px solid #ccc;border-radius:4px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn-sm:hover{background:#f5f5f5;border-color:#aaa}
+.btn-danger{color:#c7511f;border-color:#c7511f}
+.btn-danger:hover{background:#fff5f0}
+.btn-primary-sm{background:#febd69;border:1px solid #f3a847;border-radius:4px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600}
+.btn-primary-sm:hover{background:#f3a847}
+
+/* ═══ STATS ═══ */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:18px 16px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.stat-icon{font-size:30px;margin-bottom:6px}
+.stat-num{font-size:28px;font-weight:800;color:#131921;line-height:1}
+.stat-lbl{font-size:12px;color:#888;margin-top:4px}
+
+/* ═══ PRODUCTS TABLE ═══ */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#f7f7f7;text-align:left;padding:10px 12px;border-bottom:2px solid #ddd;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#555;white-space:nowrap}
+tbody td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+tbody tr:hover td{background:#fffdf5}
+table img.prod-thumb{width:44px;height:44px;object-fit:contain;border:1px solid #eee;border-radius:4px}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#00c851;margin-right:5px;vertical-align:middle}
+.price-cell{font-weight:700;color:#131921}
+.link-cell a{color:#007185;max-width:160px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom;font-size:12px}
+
+/* ═══ ORDERS TABLE ═══ */
+.order-row{border:1px solid #eee;border-radius:6px;padding:14px;margin-bottom:12px;background:#fff}
+.order-row-head{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
+.order-row-head .badge{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600}
+.badge-new{background:#fff3cd;color:#856404}
+.order-row-body{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.order-row-body img{width:52px;height:52px;object-fit:contain;border:1px solid #eee;border-radius:4px}
+.order-info{flex:1;min-width:200px;font-size:13px}
+.order-info b{display:block;margin-bottom:3px}
+.order-info .addr{color:#555;font-size:12px;margin-top:4px;line-height:1.5}
+.order-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.order-meesho{display:inline-flex;align-items:center;gap:4px;background:#e8f4fd;border:1px solid #b3d4f5;border-radius:4px;padding:5px 10px;font-size:12px;color:#0066cc;cursor:pointer;font-weight:600}
+.order-meesho:hover{background:#d0e8fb}
+.empty-state{text-align:center;padding:60px 20px;color:#888}
+.empty-icon{font-size:48px;margin-bottom:12px}
+
+/* ═══ GH SYNC BANNER ═══ */
+.sync-banner{background:#f0f9ff;border:1px solid #b3d9f7;border-radius:6px;padding:14px 16px;font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px}
+.sync-banner .sb-icon{font-size:22px;flex-shrink:0}
+.sync-banner code{background:#dde8ff;padding:2px 6px;border-radius:3px;font-size:12px}
+
+/* ═══ SCRIPT BOX ═══ */
+.script-box{background:#1e1e1e;color:#d4d4d4;border-radius:6px;padding:16px;font-family:monospace;font-size:12px;line-height:1.6;overflow-x:auto;white-space:pre;margin:12px 0}
+
+/* ═══ TOAST + SPINNER ═══ */
+#a-toast{position:fixed;bottom:24px;right:24px;background:#232f3e;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:320px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+#a-toast.show{opacity:1}
+.spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ════ AUTH SCREEN ════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-lock">🔐</div>
+    <div class="auth-logo">X <span>Bazaar</span></div>
+    <div class="auth-sub">Admin Panel — Authorized Access Only</div>
+    <input type="password" id="pwd-inp" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doAuth()"/>
+    <button onclick="doAuth()">Unlock Panel</button>
+    <div class="auth-err" id="auth-err"></div>
+  </div>
+</div>
+
+<!-- ════ ADMIN APP ════ -->
+<div id="admin-app">
+  <div class="a-header">
+    <div>
+      <span class="a-brand">X Bazaar Admin</span>
+      <small>Control Panel</small>
+    </div>
+    <div class="a-header-right">
+      <span class="gh-status loading" id="gh-status">⟳ Connecting…</span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="a-nav">
+    <button class="a-nav-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="a-nav-btn" onclick="switchTab('add-product')">➕ Add Product</button>
+    <button class="a-nav-btn" onclick="switchTab('products')">📦 Products</button>
+    <button class="a-nav-btn" onclick="switchTab('orders')">🛒 Orders <span id="order-badge" style="background:#cc0c39;color:#fff;border-radius:10px;padding:1px 6px;font-size:11px;margin-left:4px;display:none">0</span></button>
+    <button class="a-nav-btn" onclick="switchTab('categories')">🗂 Categories</button>
+    <button class="a-nav-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div id="tab-dashboard" class="tab active">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-num" id="s-prods">0</div><div class="stat-lbl">Products</div></div>
+      <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-num" id="s-orders">0</div><div class="stat-lbl">Total Orders</div></div>
+      <div class="stat-card"><div class="stat-icon">🗂</div><div class="stat-num" id="s-cats">0</div><div class="stat-lbl">Categories</div></div>
+      <div class="stat-card"><div class="stat-icon">🌐</div><div class="stat-num" id="s-status" style="font-size:18px">Checking…</div><div class="stat-lbl">GitHub Status</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Quick Actions</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn-primary-sm" onclick="switchTab('add-product')">➕ Add Product</button>
+        <button class="btn-sm" onclick="pushToGitHub(true)">☁️ Sync to GitHub Now</button>
+        <button class="btn-sm" onclick="switchTab('orders')">🛒 View Orders</button>
+        <button class="btn-sm" onclick="window.open('index.html','_blank')">🌐 View Live Site</button>
+        <button class="btn-sm" onclick="exportJSON()">⬇️ Download products.json</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Setup Checklist</div>
+      <div class="sync-banner">
+        <span class="sb-icon">ℹ️</span>
+        <div>
+          <b>GitHub Auto-Sync is Active</b> — Your GitHub Token is already configured.<br>
+          When you publish a product, it <b>automatically updates</b> <code>products.json</code> in your <code>xbazaar</code> repo and goes live.<br><br>
+          <b>Steps remaining:</b><br>
+          1. Upload <code>index.html</code>, <code>admin.html (rename it)</code>, and <code>lg.png</code> to your GitHub repo.<br>
+          2. Go to repo Settings → Pages → Branch: <b>main</b> → Save.<br>
+          3. Your site will be live at: <code>https://YOUR-USERNAME.github.io/xbazaar</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADD PRODUCT ── -->
+  <div id="tab-add-product" class="tab">
+    <div class="card">
+      <div class="card-title">
+        <span id="form-title">Add New Product</span>
+        <button class="btn-sm" id="cancel-edit-btn" style="display:none" onclick="cancelEdit()">✕ Cancel Edit</button>
+      </div>
+
+      <div class="row2">
+        <div class="fg"><label>Product Name *</label><input type="text" id="f-name" placeholder="e.g. Wireless Bluetooth Earbuds"/></div>
+        <div class="fg">
+          <label>Category *</label>
+          <select id="f-cat"><option value="">-- Select Category --</option></select>
+        </div>
+      </div>
+
+      <div class="row3">
+        <div class="fg"><label>Selling Price (₹) *</label><input type="number" id="f-price" placeholder="799"/></div>
+        <div class="fg"><label>Original MRP (₹)</label><input type="number" id="f-mrp" placeholder="2999"/></div>
+        <div class="fg">
+          <label>Stock Status</label>
+          <select id="f-stock"><option value="In Stock">In Stock</option><option value="Limited">Limited Stock</option><option value="Out of Stock">Out of Stock</option></select>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>Meesho / Source Link *</label>
+        <input type="url" id="f-link" placeholder="https://meesho.com/product/abc"/>
+        <div class="hint">⚠️ This is your private sourcing link. Sent to Orders tab when customer places order. Never shown to customers.</div>
+      </div>
+
+      <div class="fg">
+        <label>Product Description</label>
+        <div class="wy-toolbar">
+          <button onclick="wfmt('bold')"><b>B</b></button>
+          <button onclick="wfmt('italic')"><i>I</i></button>
+          <button onclick="wfmt('underline')"><u>U</u></button>
+          <button onclick="wfmt('strikeThrough')"><s>S</s></button>
+          <button onclick="wfmt('insertUnorderedList')">• List</button>
+          <button onclick="wfmt('insertOrderedList')">1. List</button>
+          <button onclick="wfmt('justifyLeft')">⬅ Left</button>
+          <button onclick="wfmt('justifyCenter')">⬌ Center</button>
+          <button onclick="wfmt('justifyRight')">Right ➡</button>
+          <select onchange="wfmt('fontSize',this.value);this.value=''">
+            <option value="">Size</option>
+            <option value="1">XS</option><option value="2">S</option>
+            <option value="3">M</option><option value="4">L</option><option value="5">XL</option>
+          </select>
+          <button onclick="wfmt('removeFormat')">✕ Clear</button>
+        </div>
+        <div id="desc-editor" contenteditable="true" placeholder="Enter detailed product description…"></div>
+      </div>
+
+      <!-- MAIN IMAGE -->
+      <div class="fg">
+        <label>Main Product Image * <small style="color:#888;font-weight:400">(Uploaded to ImgBB)</small></label>
+        <div class="img-drop" onclick="document.getElementById('f-main-img').click()">
+          <input type="file" id="f-main-img" accept="image/*" onchange="uploadImg(this,'main')"/>
+          <div id="main-placeholder"><div class="drop-icon">🖼</div><p>Click to upload main image</p><small>JPG, PNG, WEBP — max 5MB</small></div>
+          <div class="img-preview-grid" id="main-preview"></div>
+          <div class="upload-prog" id="main-prog"></div>
+        </div>
+      </div>
+
+      <!-- GALLERY -->
+      <div class="fg">
+        <label>Gallery Images <small style="color:#888;font-weight:400">(optional — multiple)</small></label>
+        <div class="img-drop" onclick="document.getElementById('f-gallery-img').click()">
+          <input type="file" id="f-gallery-img" accept="image/*" multiple onchange="uploadImg(this,'gallery')"/>
+          <div id="gallery-placeholder"><div class="drop-icon">🖼</div><p>Click to upload gallery images</p><small>Multiple files allowed</small></div>
+          <div class="img-preview-grid" id="gallery-preview"></div>
+          <div class="upload-prog" id="gallery-prog"></div>
+        </div>
+      </div>
+
+      <button class="btn-publish" id="publish-btn" onclick="publishProduct()">
+        <span id="publish-label">🚀 Publish Product — Auto Sync to GitHub</span>
+        <div class="spinner" id="publish-spinner" style="display:none"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PRODUCTS ── -->
+  <div id="tab-products" class="tab">
+    <div class="card">
+      <div class="card-title">
+        All Products (<span id="p-count">0</span>)
+        <div style="display:flex;gap:8px">
+          <input type="text" id="p-search" placeholder="Search…" oninput="renderProdTable()" style="padding:6px 10px;border:1px solid #ccc;border-radius:4px;font-size:13px;width:180px"/>
+          <button class="btn-sm" onclick="switchTab('add-product')">➕ Add New</button>
+          <button class="btn-primary-sm" onclick="pushToGitHub(true)">☁️ Sync GitHub</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Image</th><th>Product Name</th><th>Category</th>
+            <th>Price</th><th>MRP</th><th>Source Link</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="prod-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ORDERS ── -->
+
+  <div id="tab-orders" class="tab">
+    <div class="card">
+      <div class="card-title">
+        Orders (<span id="o-count">0</span>)
+        <div style="display:flex;gap:8px">
+          <input type="text" id="o-search" placeholder="Search name / phone…" oninput="renderOrders()" style="padding:6px 10px;border:1px solid #ccc;border-radius:4px;font-size:13px;width:200px"/>
+          <button class="btn-danger btn-sm" onclick="clearAllOrders()">🗑 Clear All</button>
+        </div>
+      </div>
+      <div id="orders-list"></div>
+    </div>
+  </div>
+
+  <!-- ── CATEGORIES ── -->
+  <div id="tab-categories" class="tab">
+    <div class="card">
+      <div class="card-title">Manage Categories</div>
+      <p style="font-size:13px;color:#666;margin-bottom:14px">Categories appear in the store's navigation. After changing, publish any product to sync to GitHub.</p>
+      <div class="cat-chips" id="cat-chips"></div>
+      <div class="add-cat-row">
+        <input type="text" id="new-cat" placeholder="New category name…" onkeydown="if(event.key==='Enter')addCat()"/>
+        <button class="btn-primary-sm" onclick="addCat()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SETTINGS ── -->
+  <div id="tab-settings" class="tab">
+    <div class="card">
+      <div class="card-title">GitHub Configuration</div>
+      <div class="sync-banner">
+        <span class="sb-icon">✅</span>
+        <div>
+          GitHub Token is configured. Repo: <code>xbazaar</code><br>
+          Products auto-push to GitHub when you click Publish.<br>
+          <span id="gh-user-display" style="margin-top:4px;display:block;font-weight:600;color:#007185"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Google Apps Script — Orders to Sheet</div>
+      <p style="font-size:13px;color:#555;margin-bottom:12px">Optional: if you want orders in Google Sheets too, paste this in Extensions → Apps Script and deploy as Web App.</p>
+      <div class="script-box">function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data  = JSON.parse(e.postData.contents);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['Order ID','Date','Customer','Phone',
+      'Address','Product','Price','Qty','Meesho Link','Payment']);
+  }
+  sheet.appendRow([data.orderId,data.date,data.customerName,
+    data.phone,data.address,data.productName,data.price,
+    data.qty,data.meeshoLink,data.payment]);
+  return ContentService
+    .createTextOutput(JSON.stringify({status:'success'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}</div>
+      <button class="btn-sm" onclick="copyScript()">📋 Copy Script</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Change Admin Password</div>
+      <div class="row2">
+        <div class="fg"><label>Current Password</label><input type="password" id="s-cur-pwd" placeholder="Current password"/></div>
+        <div class="fg"><label>New Password</label><input type="password" id="s-new-pwd" placeholder="Min 8 characters"/></div>
+      </div>
+      <button class="btn-primary-sm" onclick="changePwd()">Update Password</button>
+    </div>
+  </div>
+</div>
+
+<div id="a-toast"></div>
+
+<!-- ════════════════════ JAVASCRIPT ════════════════════ -->
+<script>
+// ━━━━ CONSTANTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const GITHUB_TOKEN   = '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';
+const GITHUB_REPO    = 'xbazaar';
+const IMGBB_KEY      = 'e5d9e4c495a45c85c06378a892f12691';
+const DEFAULT_PWD    = 'xbazaar@admin2024';
+const PWD_KEY        = 'xb_admin_pwd';
+const PRODS_KEY      = 'xb_admin_products';
+const CATS_KEY       = 'xb_admin_categories';
+
+// ━━━━ STATE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let products   = JSON.parse(localStorage.getItem(PRODS_KEY) || '[]');
+let categories = JSON.parse(localStorage.getItem(CATS_KEY)  || '["Electronics","Clothing","Kitchen","Footwear","Home Decor","Beauty","Toys","Books"]');
+let mainImgUrl = '';
+let galleryUrls= [];
+let editingId  = null;
+let ghUsername = '';
+
+// ━━━━ AUTH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function doAuth(){
+  const pwd    = document.getElementById('pwd-inp').value;
+  const stored = localStorage.getItem(PWD_KEY) || DEFAULT_PWD;
+  if(pwd === stored){
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display   = 'block';
+    initAdmin();
+  } else {
+    document.getElementById('auth-err').textContent = '❌ Incorrect password. Try again.';
+    document.getElementById('pwd-inp').value = '';
+    document.getElementById('pwd-inp').focus();
+  }
+}
+document.getElementById('pwd-inp').addEventListener('keydown', e=>{ if(e.key==='Enter') doAuth(); });
+
+function logout(){
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('admin-app').style.display   = 'none';
+  document.getElementById('pwd-inp').value = '';
+  document.getElementById('auth-err').textContent = '';
+}
+
+// ━━━━ INIT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+async function initAdmin(){
+  buildCatDropdown();
+  renderCatChips();
+  renderProdTable();
+  renderOrders();
+  updateStats();
+  await checkGitHub();
+}
+
+// ━━━━ GITHUB CHECK ━━━━━━━━━━━━━━━━━━━━━━━━
+async function checkGitHub(){
+  const statusEl = document.getElementById('gh-status');
+  const sStatus  = document.getElementById('s-status');
+  try {
+    const r = await fetch('https://api.github.com/user', {
+      headers:{ Authorization:`Bearer ${GITHUB_TOKEN}`, 'User-Agent':'XBazaar-Admin' }
+    });
+    if(r.ok){
+      const d  = await r.json();
+      ghUsername = d.login;
+      statusEl.className='gh-status ok';
+      statusEl.textContent = `✓ ${d.login}`;
+      sStatus.textContent  = '✓ Live';
+      sStatus.style.color  = '#007600';
+      sStatus.style.fontSize = '16px';
+      document.getElementById('gh-user-display').textContent = `Connected as: @${d.login}  |  Repo: ${d.login}/${GITHUB_REPO}`;
+    } else {
+      throw new Error('Auth failed');
+    }
+  } catch(e){
+    statusEl.className='gh-status err';
+    statusEl.textContent='⚠ GitHub Error';
+    sStatus.textContent = '⚠ Error'; sStatus.style.color='#c7511f';
+  }
+}
+
+// ━━━━ TABS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.a-nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const tabs = ['dashboard','add-product','products','orders','categories','settings'];
+  document.querySelectorAll('.a-nav-btn')[tabs.indexOf(name)].classList.add('active');
+  if(name==='products')   renderProdTable();
+  if(name==='orders')     renderOrders();
+  if(name==='categories') renderCatChips();
+  if(name==='dashboard')  updateStats();
+}
+
+// ━━━━ WYSIWYG ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function wfmt(cmd, val){
+  document.getElementById('desc-editor').focus();
+  document.execCommand(cmd, false, val||null);
+}
+
+// ━━━━ IMAGE UPLOAD ━━━━━━━━━━━━━━━━━━━━━━━━
+async function uploadImg(input, type){
+  const files   = [...input.files];
+  if(!files.length) return;
+  const progEl  = document.getElementById(type+'-prog');
+  const prevEl  = document.getElementById(type+'-preview');
+  const phEl    = document.getElementById(type==='main'?'main-placeholder':'gallery-placeholder');
+
+  progEl.style.display='block';
+  if(type==='gallery') galleryUrls=[];
+
+  for(let i=0; i<files.length; i++){
+    const f = files[i];
+    progEl.innerHTML = `⬆️ Uploading ${i+1}/${files.length}: ${f.name}…`;
+    try {
+      const fd = new FormData();
+      fd.append('image', f);
+      fd.append('key', IMGBB_KEY);
+      const r  = await fetch('https://api.imgbb.com/1/upload',{method:'POST',body:fd});
+      const d  = await r.json();
+      if(d.success){
+        const url = d.data.url;
+        if(type==='main'){
+          mainImgUrl = url;
+          prevEl.innerHTML = `<div class="img-prev-item main-thumb"><img src="${url}" title="Main image"/><button class="del-img" onclick="mainImgUrl='';this.parentNode.remove();document.getElementById('main-placeholder').style.display='block'">✕</button></div>`;
+          phEl.style.display='none';
+        } else {
+          galleryUrls.push(url);
+          const div = document.createElement('div');
+          div.className='img-prev-item';
+          const urlCopy=url;
+          div.innerHTML=`<img src="${url}"/><button class="del-img" onclick="galleryUrls=galleryUrls.filter(u=>u!=='${urlCopy}');this.parentNode.remove()">✕</button>`;
+          prevEl.appendChild(div);
+          phEl.style.display='none';
+        }
+      } else { aToast('❌ Upload failed: '+(d.error?.message||'Unknown error')); }
+    } catch(err){ aToast('❌ Upload error: '+err.message); }
+  }
+  progEl.innerHTML = `✅ ${files.length} image(s) uploaded to ImgBB`;
+  setTimeout(()=>progEl.style.display='none', 3000);
+}
+
+// ━━━━ CATEGORIES ━━━━━━━━━━━━━━━━━━━━━━━━━━
+function buildCatDropdown(){
+  const sel = document.getElementById('f-cat');
+  sel.innerHTML = '<option value="">-- Select Category --</option>';
+  categories.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+}
+
+function renderCatChips(){
+  document.getElementById('cat-chips').innerHTML = categories.map(c=>`
+    <div class="cat-chip">${c}<button class="rm" onclick="removeCat('${c}')">✕</button></div>
+  `).join('');
+}
+
+function addCat(){
+  const v = document.getElementById('new-cat').value.trim();
+  if(!v){ aToast('Enter category name'); return; }
+  if(categories.includes(v)){ aToast('Category already exists'); return; }
+  categories.push(v);
+  saveCats(); renderCatChips(); buildCatDropdown();
+  document.getElementById('new-cat').value='';
+  aToast('✅ Category added: '+v);
+}
+
+function removeCat(c){
+  if(!confirm(`Remove "${c}"?`)) return;
+  categories = categories.filter(x=>x!==c);
+  saveCats(); renderCatChips(); buildCatDropdown();
+}
+
+function saveCats(){ localStorage.setItem(CATS_KEY, JSON.stringify(categories)); }
+
+// ━━━━ PUBLISH PRODUCT ━━━━━━━━━━━━━━━━━━━━━
+async function publishProduct(){
+  const name  = document.getElementById('f-name').value.trim();
+  const cat   = document.getElementById('f-cat').value;
+  const price = parseFloat(document.getElementById('f-price').value);
+  const mrp   = parseFloat(document.getElementById('f-mrp').value)||0;
+  const link  = document.getElementById('f-link').value.trim();
+  const desc  = document.getElementById('desc-editor').innerHTML.trim();
+  const stock = document.getElementById('f-stock').value;
+
+  if(!name)      { aToast('⚠️ Product name is required'); return; }
+  if(!cat)       { aToast('⚠️ Please select a category');  return; }
+  if(!price||price<=0){ aToast('⚠️ Enter a valid price');  return; }
+  if(!mainImgUrl){ aToast('⚠️ Please upload main image');  return; }
+
+  const product = {
+    id          : editingId || ('p'+Date.now()),
+    name, category:cat, price,
+    originalPrice: mrp||0,
+    meeshoLink  : link,
+    description : desc,
+    image       : mainImgUrl,
+    gallery     : [...galleryUrls],
+    stock,
+    createdAt   : editingId ? (products.find(p=>p.id===editingId)?.createdAt||new Date().toISOString()) : new Date().toISOString()
+  };
+
+  if(editingId){
+    const idx = products.findIndex(p=>p.id===editingId);
+    if(idx>-1) products[idx]=product; else products.unshift(product);
+  } else {
+    products.unshift(product);
+  }
+  localStorage.setItem(PRODS_KEY, JSON.stringify(products));
+
+  // Push to GitHub
+  setPublishLoading(true);
+  const pushed = await pushToGitHub(false);
+  setPublishLoading(false);
+
+  if(pushed){
+    aToast(`✅ "${name}" published & synced to GitHub! Site is live.`, 4000);
+  } else {
+    aToast(`✅ Product saved locally. GitHub sync failed — try manual sync.`, 4000);
+  }
+  cancelEdit();
+  updateStats();
+  switchTab('products');
+}
+
+function setPublishLoading(on){
+  document.getElementById('publish-btn').disabled   = on;
+  document.getElementById('publish-label').style.display  = on?'none':'block';
+  document.getElementById('publish-spinner').style.display = on?'block':'none';
+}
+
+// ━━━━ GITHUB PUSH ━━━━━━━━━━━━━━━━━━━━━━━━━
+async function pushToGitHub(showToastMsg=true){
+  if(!ghUsername){
+    await checkGitHub();
+    if(!ghUsername){ if(showToastMsg) aToast('❌ GitHub not connected'); return false; }
+  }
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(products, null, 2))));
+  const apiUrl  = `https://api.github.com/repos/${ghUsername}/${GITHUB_REPO}/contents/products.json`;
+
+  try {
+    // Get current SHA
+    let sha = '';
+    const getR = await fetch(apiUrl, { headers:{ Authorization:`Bearer ${GITHUB_TOKEN}`, 'User-Agent':'XBazaar-Admin' } });
+    if(getR.ok){ const gd = await getR.json(); sha = gd.sha; }
+
+    // Push
+    const body = { message:`Update products.json — ${new Date().toLocaleString('en-IN')}`, content };
+    if(sha) body.sha = sha;
+
+    const putR = await fetch(apiUrl, {
+      method:'PUT',
+      headers:{ Authorization:`Bearer ${GITHUB_TOKEN}`, 'Content-Type':'application/json', 'User-Agent':'XBazaar-Admin' },
+      body: JSON.stringify(body)
+    });
+
+    if(putR.ok){
+      if(showToastMsg) aToast('✅ Synced to GitHub! Site updating…', 3500);
+      return true;
+    } else {
+      const err = await putR.json();
+      console.error('GitHub push error:', err);
+      if(showToastMsg) aToast('❌ GitHub push failed: '+(err.message||'Unknown'));
+      return false;
+    }
+  } catch(e){
+    console.error(e);
+    if(showToastMsg) aToast('❌ Network error: '+e.message);
+    return false;
+  }
+}
+
+// ━━━━ PRODUCTS TABLE ━━━━━━━━━━━━━━━━━━━━━━
+function renderProdTable(){
+  const q    = (document.getElementById('p-search')?.value||'').toLowerCase();
+  const list = products.filter(p=>!q||p.name.toLowerCase().includes(q)||(p.category||'').toLowerCase().includes(q));
+  document.getElementById('p-count').textContent = products.length;
+
+  const tbody = document.getElementById('prod-tbody');
+  if(!list.length){
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:#888">No products yet. <a href="#" onclick="switchTab('add-product');return false" style="color:#007185">Add your first product</a></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(p=>`
+    <tr>
+      <td><img class="prod-thumb" src="${p.image||''}" onerror="this.src='https://via.placeholder.com/44?text=?'"/></td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${p.name}">${p.name}</td>
+      <td>${p.category||'—'}</td>
+      <td class="price-cell">₹${(p.price||0).toLocaleString('en-IN')}</td>
+      <td style="color:#888">${p.originalPrice?'₹'+p.originalPrice.toLocaleString('en-IN'):'—'}</td>
+      <td class="link-cell">${p.meeshoLink?`<a href="${p.meeshoLink}" target="_blank" title="${p.meeshoLink}">🔗 View Link</a>`:'—'}</td>
+      <td><span class="live-dot"></span>Live</td>
+      <td style="white-space:nowrap">
+        <button class="btn-sm" onclick="editProduct('${p.id}')">✏️</button>
+        <button class="btn-sm btn-danger" onclick="deleteProduct('${p.id}')">🗑</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function editProduct(id){
+  const p = products.find(x=>x.id===id);
+  if(!p) return;
+  editingId=id;
+  switchTab('add-product');
+  document.getElementById('form-title').textContent   = '✏️ Edit Product';
+  document.getElementById('cancel-edit-btn').style.display='block';
+  document.getElementById('f-name').value   = p.name;
+  document.getElementById('f-cat').value    = p.category;
+  document.getElementById('f-price').value  = p.price;
+  document.getElementById('f-mrp').value    = p.originalPrice||'';
+  document.getElementById('f-link').value   = p.meeshoLink||'';
+  document.getElementById('f-stock').value  = p.stock||'In Stock';
+  document.getElementById('desc-editor').innerHTML = p.description||'';
+  mainImgUrl   = p.image||'';
+  galleryUrls  = [...(p.gallery||[])];
+  // Show previews
+  if(mainImgUrl){
+    document.getElementById('main-preview').innerHTML=`<div class="img-prev-item main-thumb"><img src="${mainImgUrl}"/></div>`;
+    document.getElementById('main-placeholder').style.display='none';
+  }
+  if(galleryUrls.length){
+    document.getElementById('gallery-preview').innerHTML=galleryUrls.map(u=>`<div class="img-prev-item"><img src="${u}"/></div>`).join('');
+    document.getElementById('gallery-placeholder').style.display='none';
+  }
+  aToast('✏️ Editing: '+p.name);
+  scrollTo(0,0);
+}
+
+function cancelEdit(){
+  editingId=null;
+  document.getElementById('form-title').textContent='Add New Product';
+  document.getElementById('cancel-edit-btn').style.display='none';
+  document.getElementById('f-name').value='';
+  document.getElementById('f-cat').value='';
+  document.getElementById('f-price').value='';
+  document.getElementById('f-mrp').value='';
+  document.getElementById('f-link').value='';
+  document.getElementById('f-stock').value='In Stock';
+  document.getElementById('desc-editor').innerHTML='';
+  document.getElementById('main-preview').innerHTML='';
+  document.getElementById('gallery-preview').innerHTML='';
+  document.getElementById('main-placeholder').style.display='block';
+  document.getElementById('gallery-placeholder').style.display='block';
+  document.getElementById('main-prog').style.display='none';
+  document.getElementById('gallery-prog').style.display='none';
+  mainImgUrl=''; galleryUrls=[];
+}
+
+async function deleteProduct(id){
+  const p = products.find(x=>x.id===id);
+  if(!confirm(`Delete "${p?.name}"? This cannot be undone.`)) return;
+  products = products.filter(x=>x.id!==id);
+  localStorage.setItem(PRODS_KEY, JSON.stringify(products));
+  await pushToGitHub(false);
+  renderProdTable(); updateStats();
+  aToast('🗑 Product deleted and synced');
+}
+
+// ━━━━ ORDERS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderOrders(){
+  const q      = (document.getElementById('o-search')?.value||'').toLowerCase();
+  let orders   = JSON.parse(localStorage.getItem('xb_admin_orders')||'[]');
+  if(q) orders = orders.filter(o=>
+    o.customerName?.toLowerCase().includes(q) ||
+    o.phone?.includes(q) ||
+    o.productName?.toLowerCase().includes(q) ||
+    o.orderId?.toLowerCase().includes(q)
+  );
+
+  const all    = JSON.parse(localStorage.getItem('xb_admin_orders')||'[]');
+  document.getElementById('o-count').textContent = all.length;
+  document.getElementById('s-orders').textContent = all.length;
+
+    // Badge on nav
+  const badge = document.getElementById('order-badge');
+  if(all.length>0){ badge.style.display='inline'; badge.textContent=all.length; }
+  else { badge.style.display='none'; }
+
+  const el = document.getElementById('orders-list');
+  if(!orders.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">🛒</div><b>No orders yet</b><br><small>Orders will appear here when customers place them</small></div>`;
+    return;
+  }
+
+  el.innerHTML = orders.map((o,i)=>`
+    <div class="order-row" id="orow-${i}">
+      <div class="order-row-head">
+        <div>
+          <b>👤 ${o.customerName}</b> &nbsp;
+          <a href="tel:${o.phone}" style="color:#007185;font-size:13px">📞 ${o.phone}</a>
+        </div>
+        <div style="font-size:12px;color:#666">${o.date}</div>
+        <div><span class="badge badge-new">NEW</span></div>
+        <div><b style="color:#B12704">₹${(o.price*(o.qty||1)).toLocaleString('en-IN')}</b> · ${o.payment||'COD'}</div>
+        <div style="font-size:11px;color:#888"># ${o.orderId}</div>
+      </div>
+      <div class="order-row-body">
+        <div class="order-info">
+          <b>${o.productName}</b>
+          <div>Qty: ${o.qty||1} &nbsp;|&nbsp; ₹${o.price} each</div>
+          <div class="addr">📍 ${o.address}</div>
+          <div class="order-actions" style="margin-top:8px">
+            ${o.meeshoLink ? `<a class="order-meesho" href="${o.meeshoLink}" target="_blank">🛍 Open Meesho Link</a>` : '<span style="font-size:12px;color:#888">No source link</span>'}
+            <button class="btn-sm" onclick="copyAddr(${i})">📋 Copy Address</button>
+            <button class="btn-sm btn-danger" onclick="deleteOrder(${i})">🗑 Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteOrder(idx){
+  if(!confirm('Delete this order?')) return;
+  let orders = JSON.parse(localStorage.getItem('xb_admin_orders')||'[]');
+  orders.splice(idx,1);
+  localStorage.setItem('xb_admin_orders', JSON.stringify(orders));
+  renderOrders(); updateStats();
+  aToast('🗑 Order deleted');
+}
+
+function clearAllOrders(){
+  if(!confirm('Delete ALL orders? This cannot be undone.')) return;
+  localStorage.setItem('xb_admin_orders','[]');
+  renderOrders(); updateStats();
+  aToast('🗑 All orders cleared');
+}
+
+function copyAddr(idx){
+  const orders = JSON.parse(localStorage.getItem('xb_admin_orders')||'[]');
+  const o = orders[idx];
+  if(!o) return;
+  const text = `Name: ${o.customerName}\nPhone: ${o.phone}\nAddress: ${o.address}\nProduct: ${o.productName}\nPrice: ₹${o.price} × ${o.qty||1}\nPayment: ${o.payment||'COD'}\nOrder ID: ${o.orderId}`;
+  navigator.clipboard.writeText(text).then(()=>aToast('📋 Order details copied!'));
+}
+
+// ━━━━ STATS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function updateStats(){
+  document.getElementById('s-prods').textContent  = products.length;
+  document.getElementById('s-cats').textContent   = categories.length;
+  const orders = JSON.parse(localStorage.getItem('xb_admin_orders')||'[]');
+  document.getElementById('s-orders').textContent = orders.length;
+  const badge = document.getElementById('order-badge');
+  if(orders.length>0){ badge.style.display='inline'; badge.textContent=orders.length; }
+  else { badge.style.display='none'; }
+}
+
+// ━━━━ SETTINGS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function changePwd(){
+  const cur  = document.getElementById('s-cur-pwd').value;
+  const nw   = document.getElementById('s-new-pwd').value;
+  const stored = localStorage.getItem(PWD_KEY)||DEFAULT_PWD;
+  if(cur!==stored){ aToast('❌ Current password is wrong'); return; }
+  if(nw.length<8) { aToast('⚠️ New password must be at least 8 characters'); return; }
+  localStorage.setItem(PWD_KEY,nw);
+  document.getElementById('s-cur-pwd').value='';
+  document.getElementById('s-new-pwd').value='';
+  aToast('✅ Password updated');
+}
+
+function copyScript(){
+  const code = document.querySelector('.script-box').textContent;
+  navigator.clipboard.writeText(code).then(()=>aToast('📋 Script copied to clipboard!'));
+}
+
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(products,null,2)],{type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download='products.json'; a.click();
+  URL.revokeObjectURL(url);
+  aToast('⬇️ products.json downloaded');
+}
+
+// ━━━━ TOAST ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let toastT;
+function aToast(msg, dur=3200){
+  const t=document.getElementById('a-toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),dur);
+}
+</script>
+</body>
+</html>
